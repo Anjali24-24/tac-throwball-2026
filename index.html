@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Throwball TAC Women's Championship</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #F5C842;
+    --gold2: #E8A020;
+    --crimson: #C0392B;
+    --dark: #0D0D0D;
+    --dark2: #161616;
+    --dark3: #1E1E1E;
+    --card: #232323;
+    --card2: #2A2A2A;
+    --text: #F0EDE8;
+    --muted: #888;
+    --alpha: #4FC3F7;
+    --beta: #A5D6A7;
+    --gamma: #CE93D8;
+    --delta: #FFAB91;
+    --waitlist: #FFD54F;
+    --locked: #81C784;
+    --danger: #EF5350;
+    --radius: 10px;
+    --transition: 0.22s cubic-bezier(.4,0,.2,1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Barlow', sans-serif;
+    background: var(--dark);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    min-height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 40px 20px 32px;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: url('https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+    filter: brightness(0.3) saturate(1.3);
+    z-index: 0;
+  }
+  .hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(13,13,13,0.82) 0%, rgba(192,57,43,0.18) 60%, rgba(245,200,66,0.10) 100%);
+    z-index: 1;
+  }
+  .hero-content {
+    position: relative; z-index: 2;
+    text-align: center;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--dark);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 3px;
+    margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.6rem, 7vw, 5rem);
+    letter-spacing: 0.04em;
+    line-height: 1;
+    color: #fff;
+  }
+  .hero h1 span { color: var(--gold); }
+  .hero-sub {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.1rem;
+    color: rgba(240,237,232,0.7);
+    letter-spacing: 0.08em;
+    margin-top: 8px;
+  }
+  .hero-stats {
+    display: flex; gap: 28px; justify-content: center;
+    margin-top: 22px; flex-wrap: wrap;
+  }
+  .stat-pill {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(245,200,66,0.3);
+    border-radius: 6px;
+    padding: 8px 18px;
+    text-align: center;
+  }
+  .stat-pill .num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem; color: var(--gold); display: block;
+  }
+  .stat-pill .lbl {
+    font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+  }
+
+  /* TABS */
+  .tabs-bar {
+    display: flex; gap: 0;
+    background: var(--dark2);
+    border-bottom: 2px solid var(--dark3);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs-bar::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    flex: 1; min-width: 90px;
+    padding: 13px 10px;
+    background: none; border: none; outline: none;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 0.95rem;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: color var(--transition), border-color var(--transition), background var(--transition);
+    white-space: nowrap;
+  }
+  .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); background: rgba(245,200,66,0.05); }
+  .tab-btn:hover:not(.active) { color: var(--text); background: rgba(255,255,255,0.04); }
+  .tab-dot {
+    display: inline-block; width: 8px; height: 8px;
+    border-radius: 50%; margin-right: 6px; vertical-align: middle;
+  }
+
+  /* MAIN */
+  .main { max-width: 1200px; margin: 0 auto; padding: 28px 16px 60px; }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.7rem; letter-spacing: 0.08em;
+    color: var(--gold); margin-bottom: 4px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-title .line { flex: 1; height: 2px; background: linear-gradient(90deg, rgba(245,200,66,0.4), transparent); }
+  .section-meta { font-size: 0.82rem; color: var(--muted); margin-bottom: 20px; }
+
+  /* PLAYER CARD */
+  .players-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 14px;
+    margin-bottom: 10px;
+  }
+  .player-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1.5px solid transparent;
+    padding: 14px 16px 12px;
+    display: flex; flex-direction: column; gap: 8px;
+    transition: border-color var(--transition), box-shadow var(--transition), opacity var(--transition);
+    position: relative;
+    overflow: hidden;
+  }
+  .player-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--accent-color, transparent);
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+  .player-card:hover { box-shadow: 0 6px 28px rgba(0,0,0,0.35); }
+  .player-card.locked {
+    border-color: rgba(129,199,132,0.45);
+    background: rgba(40,60,40,0.7);
+  }
+  .player-card.unavailable { opacity: 0.4; pointer-events: none; }
+  .player-card.captain-card { border-color: rgba(245,200,66,0.6); }
+
+  .card-top { display: flex; align-items: center; gap: 10px; }
+  .avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem;
+    color: var(--dark); flex-shrink: 0;
+    font-weight: 700;
+  }
+  .player-info { flex: 1; min-width: 0; }
+  .player-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 1rem;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .player-id { font-size: 0.72rem; color: var(--muted); font-family: 'Barlow', sans-serif; }
+  .player-dept {
+    font-size: 0.68rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.1em; padding: 2px 7px; border-radius: 3px;
+    background: rgba(255,255,255,0.08); color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .status-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .status-badge {
+    font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.1em; padding: 2px 9px; border-radius: 4px;
+  }
+  .badge-locked { background: rgba(129,199,132,0.2); color: #81C784; }
+  .badge-captain { background: rgba(245,200,66,0.2); color: var(--gold); }
+  .badge-free { background: rgba(255,255,255,0.07); color: var(--muted); }
+  .badge-votes { background: rgba(245,200,66,0.1); color: var(--gold2); font-size: 0.65rem; }
+
+  .card-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+  .btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 0.78rem;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 6px 12px; border-radius: 5px; border: none;
+    cursor: pointer; transition: all var(--transition);
+    flex: 1; min-width: 0; text-align: center;
+  }
+  .btn-fix { background: rgba(79,195,247,0.18); color: #4FC3F7; border: 1px solid rgba(79,195,247,0.35); }
+  .btn-fix:hover { background: #4FC3F7; color: var(--dark); }
+  .btn-change { background: rgba(165,214,167,0.18); color: #A5D6A7; border: 1px solid rgba(165,214,167,0.35); }
+  .btn-change:hover { background: #A5D6A7; color: var(--dark); }
+  .btn-na { background: rgba(239,83,80,0.14); color: #EF5350; border: 1px solid rgba(239,83,80,0.3); }
+  .btn-na:hover { background: #EF5350; color: #fff; }
+  .btn-captain { background: rgba(245,200,66,0.14); color: var(--gold); border: 1px solid rgba(245,200,66,0.3); }
+  .btn-captain:hover { background: var(--gold); color: var(--dark); }
+  .btn-choose { background: rgba(255,171,145,0.18); color: #FFAB91; border: 1px solid rgba(255,171,145,0.35); width: 100%; }
+  .btn-choose:hover { background: #FFAB91; color: var(--dark); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* TEAM SECTION */
+  .team-section { margin-bottom: 36px; }
+  .team-header {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 14px; flex-wrap: wrap;
+  }
+  .team-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem; letter-spacing: 0.06em;
+  }
+  .team-count {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 0.9rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .team-bar {
+    flex: 1; height: 6px; background: var(--dark3);
+    border-radius: 3px; overflow: hidden; min-width: 80px;
+  }
+  .team-bar-fill { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
+
+  /* EMPTY SLOT */
+  .empty-slot {
+    background: rgba(255,255,255,0.03);
+    border: 1.5px dashed rgba(255,255,255,0.12);
+    border-radius: var(--radius);
+    padding: 14px;
+    display: flex; align-items: center; justify-content: center;
+    min-height: 78px;
+    color: rgba(255,255,255,0.18);
+    font-size: 0.8rem; letter-spacing: 0.1em;
+    text-transform: uppercase; font-family: 'Barlow Condensed', sans-serif;
+  }
+  .empty-slot.highlight {
+    border-color: var(--gold);
+    color: var(--gold);
+    animation: pulse-slot 1.5s infinite;
+  }
+  @keyframes pulse-slot {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(245,200,66,0); }
+    50% { box-shadow: 0 0 12px 3px rgba(245,200,66,0.2); }
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.75); z-index: 100;
+    align-items: center; justify-content: center;
+    padding: 16px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: var(--card2); border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 28px; max-width: 420px; width: 100%;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+  }
+  .modal h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem; color: var(--gold); margin-bottom: 6px;
+  }
+  .modal p { font-size: 0.88rem; color: var(--muted); margin-bottom: 18px; }
+  .team-options { display: flex; flex-direction: column; gap: 10px; }
+  .team-option-btn {
+    background: var(--card); border: 1.5px solid transparent;
+    border-radius: 8px; padding: 12px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer; transition: all var(--transition);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 1rem; color: var(--text);
+  }
+  .team-option-btn:hover:not(:disabled) { border-color: var(--gold); background: rgba(245,200,66,0.07); }
+  .team-option-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .team-option-btn .slots-info { font-size: 0.78rem; color: var(--muted); font-weight: 400; }
+  .modal-close {
+    margin-top: 14px; width: 100%;
+    background: rgba(255,255,255,0.05); color: var(--muted);
+    border: 1px solid rgba(255,255,255,0.1); border-radius: 7px;
+    padding: 9px; font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.9rem; font-weight: 600; cursor: pointer;
+    transition: background var(--transition);
+  }
+  .modal-close:hover { background: rgba(255,255,255,0.09); }
+
+  /* TOAST */
+  #toast {
+    position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%);
+    background: var(--card); border: 1px solid rgba(245,200,66,0.4);
+    color: var(--text); padding: 12px 24px; border-radius: 8px;
+    font-size: 0.88rem; z-index: 200;
+    transition: opacity 0.3s; opacity: 0; pointer-events: none;
+    white-space: nowrap;
+  }
+  #toast.show { opacity: 1; }
+
+  /* WAITLIST BANNER */
+  .waitlist-header {
+    background: linear-gradient(90deg, rgba(255,213,79,0.12), transparent);
+    border: 1px solid rgba(255,213,79,0.25);
+    border-radius: var(--radius);
+    padding: 12px 18px;
+    margin-bottom: 18px;
+    font-size: 0.85rem; color: rgba(255,213,79,0.85);
+  }
+
+  /* CONFIRM DIALOG */
+  .confirm-msg {
+    background: rgba(239,83,80,0.1);
+    border: 1px solid rgba(239,83,80,0.3);
+    border-radius: 8px; padding: 12px 16px;
+    font-size: 0.85rem; color: #EF9A9A;
+    margin-bottom: 16px;
+  }
+  .confirm-btns { display: flex; gap: 10px; }
+  .btn-confirm-yes { background: #EF5350; color: #fff; border: none; border-radius: 7px; padding: 9px 18px; cursor: pointer; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.9rem; flex: 1; }
+  .btn-confirm-no { background: rgba(255,255,255,0.07); color: var(--muted); border: 1px solid rgba(255,255,255,0.12); border-radius: 7px; padding: 9px 18px; cursor: pointer; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 0.9rem; flex: 1; }
+
+  /* TAB CONTENT */
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* OVERVIEW */
+  .overview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; margin-bottom: 28px; }
+  .overview-card {
+    background: var(--card); border-radius: var(--radius);
+    padding: 18px; border-left: 4px solid var(--accent-color, var(--gold));
+  }
+  .overview-card .ov-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; }
+  .overview-card .ov-count { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+  .ov-slots { display: flex; gap: 5px; margin-top: 12px; }
+  .ov-dot { width: 22px; height: 22px; border-radius: 4px; background: rgba(255,255,255,0.07); border: 1.5px dashed rgba(255,255,255,0.15); }
+  .ov-dot.filled { background: var(--accent-color, var(--gold)); border-color: transparent; opacity: 0.85; }
+  .ov-dot.locked { opacity: 1 !important; box-shadow: 0 0 0 2px rgba(129,199,132,0.5); }
+
+  @media (max-width: 600px) {
+    .players-grid { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 2.2rem; }
+    .hero-stats { gap: 12px; }
+    .tab-btn { font-size: 0.8rem; padding: 11px 8px; }
+    .confirm-btns { flex-direction: column; }
+  }
+  @media (max-width: 400px) {
+    .card-actions { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-badge">🏐 2026 </div>
+    <h1><span>TAC Olympics</span><br>Women's Throwball</h1>
+    <div class="hero-sub">Select your team · Lock your slot · Play hard</div>
+    <div class="hero-stats">
+      <div class="stat-pill"><span class="num" id="stat-total">-</span><span class="lbl">Players</span></div>
+      <div class="stat-pill"><span class="num" id="stat-locked">-</span><span class="lbl">Locked</span></div>
+      <div class="stat-pill"><span class="num">4</span><span class="lbl">Teams</span></div>
+      <div class="stat-pill"><span class="num" id="stat-open">-</span><span class="lbl">Open Slots</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="tabs-bar">
+  <button class="tab-btn active" onclick="switchTab('overview')"><span class="tab-dot" style="background:#F5C842"></span>Overview</button>
+  <button class="tab-btn" onclick="switchTab('alpha')"><span class="tab-dot" style="background:#4FC3F7"></span>Alpha</button>
+  <button class="tab-btn" onclick="switchTab('beta')"><span class="tab-dot" style="background:#A5D6A7"></span>Beta</button>
+  <button class="tab-btn" onclick="switchTab('gamma')"><span class="tab-dot" style="background:#CE93D8"></span>Gamma</button>
+  <button class="tab-btn" onclick="switchTab('delta')"><span class="tab-dot" style="background:#FFAB91"></span>Delta</button>
+  <button class="tab-btn" onclick="switchTab('waitlist')"><span class="tab-dot" style="background:#FFD54F"></span>Waitlist</button>
+</div>
+
+<div class="main">
+
+  <div class="tab-content active" id="tab-overview">
+    <div class="section-title">Team Overview <span class="line"></span></div>
+    <div class="section-meta">Real-time status of all four teams and the waitlist</div>
+    <div class="overview-grid" id="overview-cards"></div>
+    <div class="section-title" style="margin-top:10px">Captain Board <span class="line"></span></div>
+    <div class="section-meta">Players with most captain votes per team</div>
+    <div id="captain-board" class="overview-grid"></div>
+  </div>
+
+  <div class="tab-content" id="tab-alpha">
+    <div class="team-header">
+      <div class="team-label" style="color:#4FC3F7">⚡ ALPHA</div>
+      <div class="team-count" id="alpha-count">0/7</div>
+      <div class="team-bar"><div class="team-bar-fill" id="alpha-bar" style="background:#4FC3F7;width:0%"></div></div>
+    </div>
+    <div class="players-grid" id="alpha-grid"></div>
+  </div>
+
+  <div class="tab-content" id="tab-beta">
+    <div class="team-header">
+      <div class="team-label" style="color:#A5D6A7">🌿 BETA</div>
+      <div class="team-count" id="beta-count">0/7</div>
+      <div class="team-bar"><div class="team-bar-fill" id="beta-bar" style="background:#A5D6A7;width:0%"></div></div>
+    </div>
+    <div class="players-grid" id="beta-grid"></div>
+  </div>
+
+  <div class="tab-content" id="tab-gamma">
+    <div class="team-header">
+      <div class="team-label" style="color:#CE93D8">💜 GAMMA</div>
+      <div class="team-count" id="gamma-count">0/7</div>
+      <div class="team-bar"><div class="team-bar-fill" id="gamma-bar" style="background:#CE93D8;width:0%"></div></div>
+    </div>
+    <div class="players-grid" id="gamma-grid"></div>
+  </div>
+
+  <div class="tab-content" id="tab-delta">
+    <div class="team-header">
+      <div class="team-label" style="color:#FFAB91">🔥 DELTA</div>
+      <div class="team-count" id="delta-count">0/7</div>
+      <div class="team-bar"><div class="team-bar-fill" id="delta-bar" style="background:#FFAB91;width:0%"></div></div>
+    </div>
+    <div class="players-grid" id="delta-grid"></div>
+  </div>
+
+  <div class="tab-content" id="tab-waitlist">
+    <div class="section-title">Waitlist <span class="line"></span></div>
+    <div class="waitlist-header">
+      ⏳ These players are waiting for an open slot. Click <strong>Choose Team</strong> to see available teams.
+    </div>
+    <div class="players-grid" id="waitlist-grid"></div>
+  </div>
+
+</div>
+
+<div class="modal-overlay" id="changeModal">
+  <div class="modal">
+    <h3 id="modal-title">Move to Team</h3>
+    <p id="modal-sub">Choose a team with an open seat:</p>
+    <div class="team-options" id="modal-team-options"></div>
+    <button class="modal-close" onclick="closeModal()">Cancel</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="naModal">
+  <div class="modal">
+    <h3>Mark Not Available?</h3>
+    <div class="confirm-msg">⚠️ This will remove <strong id="na-player-name"></strong> from their team and free up the slot. This action can be undone only by the organizer.</div>
+    <div class="confirm-btns">
+      <button class="btn-confirm-yes" onclick="confirmNA()">Yes, Remove</button>
+      <button class="btn-confirm-no" onclick="closeNAModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDBbkvrkDUYnEv3_5_HRXR7EJ41jglvSS4",
+  authDomain: "throwball-women.firebaseapp.com",
+  projectId: "throwball-women",
+  storageBucket: "throwball-women.firebasestorage.app",
+  messagingSenderId: "201713858358",
+  appId: "1:201713858358:web:b665caeba79e55ce4c6597"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const docRef = doc(db, "tournament", "throwball2026");
+
+// ============== STATE ==============
+const TEAM_MAX = 7;
+const TEAMS = ['alpha','beta','gamma','delta'];
+const TEAM_COLORS = { alpha: '#4FC3F7', beta: '#A5D6A7', gamma: '#CE93D8', delta: '#FFAB91' };
+const TEAM_NAMES = { alpha: '⚡ Alpha', beta: '🌿 Beta', gamma: '💜 Gamma', delta: '🔥 Delta' };
+
+const initialPlayers = [
+  { id:'swesridh', name:'Swetha Lakshme Sridharan', dept:'Enterprise', team:'alpha', locked:false, unavailable:false, captain:false, votes:0 },
+  { id:'gpairait', name:'Gautami Sinai Neureker', dept:'Enterprise', team:'alpha', locked:false, unavailable:false, captain:false, votes:0 },
+  { id:'anjchaur', name:'Anjali Chaurasiya', dept:'Enterprise', team:'alpha', locked:false, unavailable:false, captain:false, votes:0 },
+  { id:'akatare', name:'Avantika Katare', dept:'Enterprise', team:'alpha', locked:false, unavailable:false, captain:false, votes:0 },
+  { id:'aargarg', name:'Aarushi Garg', dept:'Enterprise', team:'alpha', locked:false, unavailable:false, captain:false, votes:0 },
+  { id:'vrmehrot', name:'Vritti Mehrotra', dept:'Enterprise', team:'alpha', locked:false, unavailable:false, captain:false, votes:0 },
+  { id:'bmarripu', name:'M Bhavya Sri', dept:'Enterprise', team:'waitlist', locked:false, unavailable:false, captain:false, votes:0 },
+  { id:'rishitja', name:'Rishita Jain', dept:'Enterprise', team:'waitlist', locked:false, unavailable:false, captain:false, votes:0 },
+  { id:'madhumbh', name:'Madhumita Bhat', dept:'Enterprise', team:'waitlist', locked:false, unavailable:false, captain:false, votes:0 },
+  { id:'stchauha', name:'Stuti Chauhan', dept:'Enterprise', team:'waitlist', locked:false, unavailable:false, captain:false, votes:0 },
+  { id:'ummahesh', name:'Uma Maheshwari', dept:'Enterprise', team:'waitlist', locked:false, unavailable:false, captain:false, votes:0 },
+  { id:'trigupta', name:'Tripti Gupta', dept:'SP', team:'beta', locked:false, unavailable:false, captain:false, votes:0 },
+  { id:'akesharw', name:'Akanksha Kesharwani', dept:'SP', team:'waitlist', locked:false, unavailable:false, captain:false, votes:0 },
+  { id:'anbchand', name:'Anbukavinmugil Chandrasekaran', dept:'SP', team:'waitlist', locked:false, unavailable:false, captain:false, votes:0 },
+  { id:'anairsud', name:'Amrutha Nair Sudarsan', dept:'SP', team:'waitlist', locked:false, unavailable:false, captain:false, votes:0 },
+  { id:'arhaque', name:'Arifa Haque', dept:'SP', team:'beta', locked:false, unavailable:false, captain:false, votes:0 },
+  { id:'gpandi', name:'Geethapriya', dept:'SP', team:'beta', locked:false, unavailable:false, captain:false, votes:0 },
+  { id:'anjkushw', name:'Anjali Kushwah', dept:'SP', team:'beta', locked:false, unavailable:false, captain:false, votes:0 },
+  { id:'swenatar', name:'Swetha Natarajan', dept:'SP', team:'waitlist', locked:false, unavailable:false, captain:false, votes:0 },
+  { id:'deekshsb', name:'Deeksha Shekarbabu', dept:'SP', team:'waitlist', locked:false, unavailable:false, captain:false, votes:0 },
+  { id:'aropleka', name:'Aarti Paradkar', dept:'Collab', team:'gamma', locked:false, unavailable:false, captain:false, votes:0 },
+  { id:'sumas', name:'Suma S', dept:'Collab', team:'gamma', locked:false, unavailable:false, captain:false, votes:0 },
+  { id:'sakarade', name:'Sai Varshini Karade', dept:'Collab', team:'gamma', locked:false, unavailable:false, captain:false, votes:0 },
+  { id:'saprawat', name:'Sapna Rawat', dept:'Collab', team:'gamma', locked:false, unavailable:false, captain:false, votes:0 },
+  { id:'chsriram', name:'Chinmaye Sriram', dept:'Collab', team:'gamma', locked:false, unavailable:false, captain:false, votes:0 },
+  { id:'viddahiy', name:'Vidisha Dahiya', dept:'Collab', team:'gamma', locked:false, unavailable:false, captain:false, votes:0 },
+  { id:'gakumari', name:'Gayatri Kumari', dept:'Data Center', team:'waitlist', locked:false, unavailable:false, captain:false, votes:0 },
+  { id:'bsorao', name:'B. Soundharya Rao', dept:'Duty Management', team:'waitlist', locked:false, unavailable:false, captain:false, votes:0 },
+  { id:'rashsin3', name:'Rashmi Singh', dept:'Security', team:'waitlist', locked:false, unavailable:false, captain:false, votes:0 },
+];
+
+let players = [];
+let pendingChangeId = null;
+let pendingNAId = null;
+
+// ============== FIREBASE HELPERS ==============
+async function saveToFirebase() {
+  try {
+    await setDoc(docRef, { players: players });
+  } catch (e) {
+    console.error("Firebase Save Error:", e);
+    showToast("⚠️ Error saving data");
+  }
+}
+
+onSnapshot(docRef, (doc) => {
+  if (doc.exists()) {
+    players = doc.data().players;
+    renderAll();
+  } else {
+    players = [...initialPlayers];
+    saveToFirebase();
+  }
+});
+
+// ============== HELPERS ==============
+function getPlayer(id) { return players.find(p => p.id === id); }
+function teamPlayers(team) { return players.filter(p => p.team === team && !p.unavailable); }
+function teamCount(team) { return teamPlayers(team).length; }
+function teamFull(team) { return teamCount(team) >= TEAM_MAX; }
+function openSlots(team) { return TEAM_MAX - teamCount(team); }
+function totalLocked() { return players.filter(p => p.locked && !p.unavailable).length; }
+function totalOpenSlots() { return TEAMS.reduce((a, t) => a + openSlots(t), 0); }
+
+function avatarColor(dept) {
+  const map = { Enterprise: '#4FC3F7', SP: '#A5D6A7', Collab: '#CE93D8', 'Data Center': '#FFAB91', 'Duty Management': '#FFD54F', Security: '#EF9A9A' };
+  return map[dept] || '#888';
+}
+function initials(name) {
+  return name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+}
+function teamColor(team) { return TEAM_COLORS[team] || '#888'; }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ============== RENDER ==============
+function renderAll() {
+  updateStats();
+  renderTeam('alpha');
+  renderTeam('beta');
+  renderTeam('gamma');
+  renderTeam('delta');
+  renderWaitlist();
+  renderOverview();
+}
+
+function updateStats() {
+  document.getElementById('stat-total').textContent = players.filter(p => !p.unavailable).length;
+  document.getElementById('stat-locked').textContent = totalLocked();
+  document.getElementById('stat-open').textContent = totalOpenSlots();
+}
+
+function renderTeam(team) {
+  const grid = document.getElementById(team + '-grid');
+  const tp = teamPlayers(team);
+  const count = tp.length;
+  document.getElementById(team + '-count').textContent = count + '/7';
+  document.getElementById(team + '-bar').style.width = (count/7*100) + '%';
+  grid.innerHTML = '';
+  tp.forEach(p => { grid.appendChild(makeCard(p)); });
+  for (let i = count; i < TEAM_MAX; i++) {
+    const slot = document.createElement('div');
+    slot.className = 'empty-slot'; slot.textContent = '· Open Slot ·';
+    grid.appendChild(slot);
+  }
+}
+
+function renderWaitlist() {
+  const grid = document.getElementById('waitlist-grid');
+  const wl = players.filter(p => p.team === 'waitlist' && !p.unavailable);
+  grid.innerHTML = '';
+  if (wl.length === 0) {
+    grid.innerHTML = '<div class="empty-slot" style="grid-column:1/-1">✅ No players on waitlist</div>';
+    return;
+  }
+  wl.forEach(p => { grid.appendChild(makeCard(p, true)); });
+}
+
+function renderOverview() {
+  const oc = document.getElementById('overview-cards');
+  oc.innerHTML = '';
+  TEAMS.forEach(t => {
+    const tp = teamPlayers(t);
+    const count = tp.length;
+    const card = document.createElement('div');
+    card.className = 'overview-card';
+    card.style.setProperty('--accent-color', teamColor(t));
+    const dots = Array(7).fill(0).map((_,i) => {
+      const p = tp[i];
+      const cls = p ? (p.locked ? 'ov-dot filled locked' : 'ov-dot filled') : 'ov-dot';
+      const title = p ? p.name : 'Empty';
+      return `<div class="${cls}" title="${title}"></div>`;
+    }).join('');
+    card.innerHTML = `
+      <div class="ov-name" style="color:${teamColor(t)}">${TEAM_NAMES[t]}</div>
+      <div class="ov-count">${count}/7 players · ${openSlots(t)} open</div>
+      <div class="ov-slots">${dots}</div>
+    `;
+    oc.appendChild(card);
+  });
+
+  const cb = document.getElementById('captain-board');
+  cb.innerHTML = '';
+  TEAMS.forEach(t => {
+    const tp = teamPlayers(t);
+    const sorted = [...tp].sort((a,b) => b.votes - a.votes);
+    const top = sorted[0];
+    const card = document.createElement('div');
+    card.className = 'overview-card';
+    card.style.setProperty('--accent-color', teamColor(t));
+    if (top && top.votes > 0) {
+      card.innerHTML = `
+        <div class="ov-name" style="color:${teamColor(t)}">${TEAM_NAMES[t]}</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1rem;margin-top:8px">🏅 ${top.name}</div>
+        <div style="font-size:0.75rem;color:var(--muted);margin-top:4px">${top.votes} vote${top.votes>1?'s':''}</div>
+        <div style="margin-top:8px;font-size:0.75rem;color:rgba(255,255,255,0.4)">
+          ${sorted.slice(1,3).filter(p=>p.votes>0).map(p=>`${p.name.split(' ')[0]} (${p.votes})`).join(', ')}
+        </div>
+      `;
+    } else {
+      card.innerHTML = `<div class="ov-name" style="color:${teamColor(t)}">${TEAM_NAMES[t]}</div><div style="font-size:0.8rem;color:var(--muted);margin-top:10px">No votes yet</div>`;
+    }
+    cb.appendChild(card);
+  });
+}
+
+function makeCard(p, isWaitlist = false) {
+  const card = document.createElement('div');
+  card.className = 'player-card' + (p.locked ? ' locked' : '') + (p.unavailable ? ' unavailable' : '') + (p.captain ? ' captain-card' : '');
+  const tColor = p.team !== 'waitlist' ? teamColor(p.team) : '#FFD54F';
+  card.style.setProperty('--accent-color', tColor);
+  card.style.borderColor = p.locked ? 'rgba(129,199,132,0.4)' : p.captain ? 'rgba(245,200,66,0.5)' : 'transparent';
+
+  const badges = [];
+  if (p.locked) badges.push(`<span class="status-badge badge-locked">🔒 Locked</span>`);
+  if (p.captain) badges.push(`<span class="status-badge badge-captain">👑 Captain</span>`);
+  if (!p.locked && !p.captain) badges.push(`<span class="status-badge badge-free">Active</span>`);
+  if (p.votes > 0) badges.push(`<span class="status-badge badge-votes">🏅 ${p.votes} vote${p.votes>1?'s':''}</span>`);
+
+  let actions = '';
+  if (isWaitlist) {
+    actions = `<button class="btn btn-choose" onclick="openChooseTeam('${p.id}')">🎯 Choose Team</button>`;
+  } else if (p.locked) {
+    actions = `
+      <div style="
+        background: rgba(129, 199, 132, 0.1); 
+        color: #81C784; 
+        font-family: 'Barlow Condensed', sans-serif;
+        font-weight: 700; 
+        font-size: 0.7rem; 
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 8px; 
+        border-radius: 6px; 
+        text-align: center;
+        border: 1px solid rgba(129, 199, 132, 0.2);
+        width: 100%;
+      ">
+        🔒 Seat Confirmed
+      </div>`;
+  } else {
+    actions = `
+      <button class="btn btn-fix" onclick="fixTeam('${p.id}')">🔒 Fix Team</button>
+      <button class="btn btn-change" onclick="openChangeTeam('${p.id}')">🔄 Change</button>
+      <button class="btn btn-na" onclick="openNA('${p.id}')">❌ N/A</button>
+      <button class="btn btn-captain" onclick="voteCaptain('${p.id}')">👑 Vote</button>
+    `;
+  }
+
+  card.innerHTML = `
+    <div class="card-top">
+      <div class="avatar" style="background:${avatarColor(p.dept)}">${initials(p.name)}</div>
+      <div class="player-info">
+        <div class="player-name">${p.name}</div>
+        <div class="player-id">${p.id}</div>
+      </div>
+      <div class="player-dept" style="color:${avatarColor(p.dept)};background:${avatarColor(p.dept)}1a">${p.dept}</div>
+    </div>
+    <div class="status-row">${badges.join('')}</div>
+    <div class="card-actions">${actions}</div>
+  `;
+  return card;
+}
+
+// ============== ACTIONS ==============
+function switchTab(name) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  const btn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.innerText.toLowerCase().includes(name.toLowerCase()));
+  if(btn) btn.classList.add('active');
+}
+
+function fixTeam(id) {
+  const p = getPlayer(id);
+  if (!p || p.locked) return;
+  p.locked = true;
+  showToast(`✅ ${p.name} locked to ${TEAM_NAMES[p.team]}`);
+  saveToFirebase();
+}
+
+function openChangeTeam(id) {
+  const p = getPlayer(id);
+  if (!p || p.locked) { showToast('Player is locked!'); return; }
+  pendingChangeId = id;
+  document.getElementById('modal-title').textContent = `Move ${p.name.split(' ')[0]}`;
+  const opts = document.getElementById('modal-team-options');
+  opts.innerHTML = '';
+  TEAMS.forEach(t => {
+    const disabled = teamFull(t) && p.team !== t;
+    const btn = document.createElement('button');
+    btn.className = 'team-option-btn';
+    btn.disabled = disabled;
+    btn.style.borderColor = disabled ? 'transparent' : teamColor(t);
+    btn.innerHTML = `
+      <span style="color:${teamColor(t)}">${TEAM_NAMES[t]}</span>
+      <span class="slots-info">${disabled ? 'Full' : openSlots(t) + ' open'}</span>
+    `;
+    btn.onclick = () => { movePlayer(id, t); closeModal(); };
+    opts.appendChild(btn);
+  });
+  document.getElementById('changeModal').classList.add('show');
+}
+
+function movePlayer(id, toTeam) {
+  const p = getPlayer(id);
+  if (!p || p.locked) return;
+  p.team = toTeam;
+  showToast(`🔀 ${p.name.split(' ')[0]} moved to ${TEAM_NAMES[toTeam]}`);
+  saveToFirebase();
+}
+
+function closeModal() {
+  document.getElementById('changeModal').classList.remove('show');
+}
+
+function openNA(id) {
+  const p = getPlayer(id);
+  if (!p || p.locked) {
+    showToast("🚫 Locked players cannot be moved to Waitlist!");
+    return; 
+  }
+  pendingNAId = id;
+  document.getElementById('na-player-name').textContent = p.name;
+  // Updated 
+  document.querySelector('#naModal h3').textContent = "Move to Waitlist?";
+  document.querySelector('#naModal .confirm-msg').innerHTML = 
+    `⚠️ This will move <strong>${p.name}</strong> to the Waitlist and free up their current team slot.`;
+  document.getElementById('naModal').classList.add('show');
+}
+
+function confirmNA() {
+  const p = getPlayer(pendingNAId);
+  if (!p || p.locked) return;
+  p.team = 'waitlist';   // Move them to the waitlist category
+  p.locked = false;      // Unlock them so they can be picked again
+  p.unavailable = false; // Keep them visible in the database
+  
+  showToast(`📋 ${p.name.split(' ')[0]} moved to Waitlist`);
+  
+  closeNAModal();
+  saveToFirebase();           // Ensure this syncs to Firebase
+  renderAll();           // Refresh the UI
+}
+
+function closeNAModal() {
+  document.getElementById('naModal').classList.remove('show');
+}
+
+function voteCaptain(id) {
+  const p = getPlayer(id);
+  if (!p) return;
+  p.votes = (p.votes || 0) + 1;
+  const teamMates = teamPlayers(p.team);
+  const maxVotes = Math.max(...teamMates.map(m => m.votes));
+  teamMates.forEach(m => m.captain = (m.votes === maxVotes && maxVotes > 0));
+  showToast(`👑 Voted for ${p.name.split(' ')[0]}`);
+  saveToFirebase();
+}
+
+// ============== GLOBAL EXPOSURE ==============
+window.switchTab = switchTab;
+window.fixTeam = fixTeam;
+window.openChangeTeam = openChangeTeam;
+window.openChooseTeam = (id) => openChangeTeam(id);
+window.movePlayer = movePlayer;
+window.closeModal = closeModal;
+window.openNA = openNA;
+window.confirmNA = confirmNA;
+window.closeNAModal = closeNAModal;
+window.voteCaptain = voteCaptain;
+
+</script>
+</body>
+</html>
