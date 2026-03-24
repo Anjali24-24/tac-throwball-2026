@@ -354,7 +354,23 @@
   .tab-content.active { display: block; }
 
   /* OVERVIEW */
-  .overview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; margin-bottom: 28px; }
+  .overview-grid { 
+    display: grid; 
+    /* This forces exactly 4 columns and prevents them from wrapping to a 2nd row */
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 16px; 
+    margin-bottom: 28px; 
+    width: 100%;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  @media (max-width: 900px) {
+    .overview-grid {
+      grid-template-columns: repeat(2, 1fr); /* Only wraps on smaller tablets/phones */
+    }
+  }
   .overview-card {
     background: var(--card); border-radius: var(--radius);
     padding: 18px; border-left: 4px solid var(--accent-color, var(--gold));
